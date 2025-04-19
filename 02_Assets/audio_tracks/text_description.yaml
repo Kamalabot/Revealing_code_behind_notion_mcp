@@ -1,0 +1,73 @@
+hook: |
+  Have you run into this?  
+  You built your own MCP server for your own application, but it keeps choosing the wrong tool.
+  Odds are, the model isn’t getting the right intent, because you’re not giving it enough to work with.
+  In this video, we’ll demystify how intent extraction really works, and walk through the actual code powering the Notion MCP server.
+context: |
+  What if you could dump your thoughts straight into Notion, without ever opening it?
+  You can find out how it is done in this video here. 
+  In this video, I’ll walk you through how I built a terminal-first Brain Dump tool using an MCP Client, a custom MCP server, and the Notion API in the backend.
+  You’ll see the actual thought process behind the tool's design, and how I implemented it—from extracting user intent, to turning that into structured instructions the model understands.
+  This is where AI meets productivity—code-first.
+intent_t1: |
+  When you're using the AI Models with MCP, you're not just typing, you're trying to get something done.
+  That desire to complete a type of task, combined with what the task description is, forms the intent.
+  When you give a sentence to a model like Sonnet or GPT-4, the first thing it does is try to extract your intent.
+  What you want and what action is needed.
+  If your request matches something it already understands like "convert this paragraph into a bullet list", it can follow through using built-in instructions it has seen during training.
+  But if you're asking for something custom—like "read a Notion database and summarize the latest entries", the model needs to look for a tool it can use to complete that intent.
+intent_ext_t2_ol: |
+  If you're like most developers, you probably dive straight into building the tool, then wonder why the model never uses it.
+  The truth is, you're likely skipping the most important step. 
+  Understanding how intent extraction works at the MCP server level.
+  That’s what we’ll explore next, so your tools don't just exist, but actually get used by the model.
+intent_ext_t2: |
+  Intent extraction is essentially an N-class classification problem.  
+  The user can say anything, but the model’s job is to classify that input into one of the available tool-based intents.
+  In our case, the model has 4 known intents—each one derived from the docstrings of available functions. 
+  These could be things like read_file, write_file, delete_file,list_files. 
+  When the user types a request like “show me the contents of this file”, the model maps it to the read_file intent. Success.
+  But if the user asks for something like "analyze this document for top tasks" and there’s no matching function with that intent—the model fails to classify it.
+  No tool, no action.
+design_tool_t3_ol: |
+  Once you understand how intents work, here’s a critical piece developers often miss.  
+  From where you should start designing your functions? 
+  Start from the end—where the actual work is done, and where the outcome, success or failure is being informed to the model.
+  Think what the model needs to know, and what the user needs to know.
+  Only then should you write a docstring that clearly describes what the tool does, decide on the arguments required and work on the logic.
+design_tool_t3: |
+  In a Brain Dump Notion template, two actions matter most. 
+  add task and list task.
+  Let’s take the Add Task action and break it down.
+  End Result. This What the model needs to complete user intent.
+  In Notion, a task is stored as a page.
+  After successfully creating it, Notion returns a page ID.
+  The model expects this ID as confirmation of success.
+  Input Required. The user’s task as a text string with the intent to add it to database.
+  For example Add email the client task to database.
+  Here the task text becomes the argument
+  Execution Logic. Receive the task text from the user input.
+  Pass it to the MCP tool designed for add_task. 
+  Use notion-client to create a new page in the Brain Dump database.
+  Return the Notion page ID to the model as a success signal.
+code_wt_t4_ol: |
+  You might not believe how simple this is.  
+  The model reads your sentence, extracts your intent, pulls out the task. 
+  And sends it straight to Notion.
+  All from your terminal.No clicking. No templates.
+  Let me show you exactly how it’s implemented in Python using the notion-client package.
+code_wt_t4: |
+  Looking at the add_task tool now feels like a walk in the park.
+  Because every part of the code  has already been demystified.
+  The function name is the tool name.
+  The docstring tells the model it’s meant for the add task intent.
+  The return statement signals success like a created page ID.
+next_video_hook: |
+  Getting intent extraction right is only part of the equation.
+  When you introduce multiple tasks, tools, and databases, your MCP Server becomes a dynamic system.
+  A database of tools, prompts, and AI resources.
+  Your job as a developer?  
+  Think like the user.
+  How will they ask for something? Then design tools that respond.
+  Need inspiration? In this video, I show  how I integrated Reddit data into MCP. 
+  A real-world use case that stretches beyond Notion.
